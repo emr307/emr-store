@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>متجر أجهزة اللابتوب</title>
+  <style>
+    /* تنسيق صندوق البطاقة بالكامل */
+    .product-card {
+      width: 280px;              /* عرض البطاقة */
+      border: 1px solid #ddd;    /* إطار رمادي خفيف */
+      border-radius: 10px;       /* زوايا دائرية ناعمة */
+      padding: 16px;             /* مسافة وفراغ داخلي */
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* ظل خفيف يعطي بعداً ثلاثياً */
+      font-family: sans-serif;   /* نوع خط مريح للقراءة */
+      background-color: #ffffff;    /* لون خلفية البطاقة */
+      transition: transform 0.3s ease, box-shadow 0.3s ease; /* سرعة الحركة ونعومتها (0.3 ثانية) */
+    }
+    .product-card:hover {
+      transform: translateY(-8px); /* رفع البطاقة للأعلى بمقدار 8 بكسل */
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); /* جعل الظل أغمق وأوسع لتبدو البطاقة أقرب */
+    }
+    .product-card ul {
+      list-style: none;         /* إزالة النقاط السوداء التقليدية */
+      padding: 0;
+      margin: 15px 0;
+      font-size: 14px;
+      color: #4a5568;           /* لون رمادي غامق أنيق ومريح للقراءة */
+      line-height: 1.8;         /* مسافة مريحة بين الأسطر */
+    }
+
+    .product-card ul li {
+      border-bottom: 1px dashed #edf2f7; /* خط منقط خفيف يفصل بين كل معلومة وأخرى */
+      padding: 4px 0;
+    }
+    body {
+      margin: 0;
+      padding: 20px;
+          /* تمثيل طبقة التراكب البيضاء الشفافة */
+      background-image: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), url('images/cover.jpeg');
+           /* تثبيت الصورة خلف المحتوى فلا تتحرك عند النزول لأسفل */
+      background-attachment: fixed;
+           /* جعل الصورة تمتد لتغطي كامل خلفية الشاشة */
+      background-size: cover;
+           /* توسيط الصورة */
+      background-position: center;
+    }
+    /* ضبط حجم الصورة لتناسب حجم البطاقة بدقة */
+    .product-card img {
+      width: 100%;       /* تجعل عرض الصورة مساوياً تماماً لعرض البطاقة */
+      height: 180px;      /* تحافظ على أبعاد وتناسب الصورة دون تشويه */
+      object-fit: cover;
+      border-radius: 6px; /* انحناء خفيف لزوايا الصورة لتتماشى مع تصميم البطاقة */
+    }
+    .products-container {
+      display: flex;       /* تجعل العناصر بداخلها تصطف بجانب بعضها أفقياً */
+      gap: 20px;          /* تترك مسافة أنيقة بين كل بطاقة وأخرى */
+      flex-wrap: wrap;    /* إذا امتلأ السطر، تنزل البطاقات الزائدة لسطر جديد تلقائياً */
+      justify-content: center; /* توسيط كل البطاقات في منتصف الصفحة */
+    }
+    /* تنسيق زر الطلب */
+    .order-btn {
+      display: block;            /* ليمتد بعرض البطاقة ككتلة واحدة */
+      text-align: center;        /* توسيط النص */
+      text-decoration: none;     /* إزالة الخط الأزرق الافتراضي تحت الرابط */
+      box-sizing: border-box;    /* لضبط الحجم الداخلي بدقة */
+      background-color: #25D366; /* لون واتساب الأخضر */
+      color: white;              /* لون النص بالأبيض */
+      border-radius: 6px;        /* انحناء الزوايا */
+      padding: 10px 15px;        /* المساحة الداخلية */
+      font-size: 16px;           /* حجم الخط */
+      transition: background-color 0.2s ease; /* نعومة تغيير اللون */
+      cursor: pointer;                        /* مؤشر اليد */
+    }
+    .order-btn:hover {
+      background-color: #1ebe5d;              /* درجة خضراء أفتح أو أغمق للتفاعل */
+    }
+    .product-card .price {
+      font-size: 20px;
+      font-weight: bold;
+      color: #e63946;           /* لون أحمر مميز وجذاب للأسعار */
+      margin: 12px 0;
+      text-align: center;       /* توسيط السعر ليظهر متزناً فوق الزر */
+    }
+    .store-title {
+      display: block;
+      width: fit-content;            /* يجعل حجم الشريط مناسباً لحجم النص تماماً */
+      margin: 25px auto;             /* يوسط الشريط في منتصف الصفحة ويترك مسافة حوله */
+      padding: 12px 35px;            /* مسافة داخلية مريحة حول النص */
+      background-color: #ffffff;     /* خلفية بيضاء نقية */
+      border-radius: 8px;            /* زوايا دائرية ناعمة */
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* ظل خفيف وأنيق */
+      font-size: 26px;
+      color: #1e3c72;                /* لون كحلي تقني فخم */
+      text-align: center;
+    }
+    .store-footer {
+      margin-top: 40px;             /* مسافة تفصل الشريط عن البطاقات */
+      background-color: #1e293b;    /* كحلي غامق فخم */
+      color: #cbd5e1;               /* لون نص رمادي فاتح ومريح */
+      text-align: center;
+      padding: 20px 10px;
+      font-size: 14px;
+    }
+
+    .store-footer p {
+      margin: 6px 0;
+    }
+
+    .store-footer .footer-note {
+      font-size: 13px;
+      color: #94a3b8;               /* رمادي أفتح قليلاً للملاحظة الفرعية */
+    }
+  </style>
+</head>
+<body>
+  <h1 class="store-title">متجر E.M.R لبيع اجهزة اللابتوب</h1>
+<div class="products-container">
+  <!-- كود البطاقة الخاص بك -->
+  <div class="product-card">
+    <h2>Lenovo ThinkPad T460</h2>
+    <img src="images/lenovo-t460.png" alt="صورة لابتوب لينوفو T460">    
+    <ul>
+      <li>المعالج: Intel Core i5 الجيل الخامس</li>
+      <li>الرام: RAM 8 GB</li>
+      <li>التخزين: SSD 256 GB</li>
+      <li>بطارية ممتازة</li>
+      <li>وزن خفيف</li>
+    </ul>
+    <p class="price">160 JD</p>
+    <a href="https://wa.me/962796611074?text=مرحبا%20اريد%20جهاز%20لينوفو" class="order-btn" target="_blank">أطلبه الآن عبر الواتساب</a>
+  </div>
+
+  <!-- كود البطاقة الخاص بك -->
+  <div class="product-card">
+    <h2>Toshiba</h2>
+    <img src="images/laptop2.jpeg" alt="صورة لابتوب توشيبا">    
+    <ul>
+      <li>المعالج: Intel Core i3 الجيل الأول</li>
+      <li>الرام: RAM 4 GB</li>
+      <li>التخزين: HDD 256 GB</li>
+      <li>بطارية ممتازة</li>
+      <li>وزن خفيف</li>
+    </ul>
+    <p class="price">100 JD</p>
+    <a href="https://wa.me/962796611074" class="order-btn" target="_blank">أطلبه الآن عبر الواتساب</a>
+  </div>
+    <!-- كود البطاقة الخاص بك -->
+  <div class="product-card">
+    <h2>Lenovo</h2>
+    <img src="images/laptop3.jpeg" alt="صورة لابتوب لينوفو">    
+    <ul>
+      <li>المعالج: Intel سيليرون</li>
+      <li>الرام: RAM 8 GB</li>
+      <li>التخزين: SSD 256 GB</li>
+      <li>بطارية ممتازة</li>
+      <li>وزن خفيف</li>
+    </ul>
+    <p class="price">150 JD</p>
+    <a href="https://wa.me/962796611074" class="order-btn" target="_blank">أطلبه الآن عبر الواتساب</a>
+  </div>
+    <div class="product-card">
+    <h2>HP</h2>
+    <img src="images/laptop4.jpeg" alt="صورة لابتوب لينوفو">    
+    <ul>
+      <li>المعالج: Intel Core i5 الجيل السادس</li>
+      <li>الرام: RAM 8 GB</li>
+      <li>التخزين: SSD 128 GB قابل للزيادة</li>
+      <li>بطارية ممتازة</li>
+      <li>وزن خفيف</li>
+    </ul>
+    <p class="price">190 JD</p>
+    <a href="https://wa.me/962796611074" class="order-btn" target="_blank">أطلبه الآن عبر الواتساب</a>
+  </div>
+
+</div>
+    <footer class="store-footer">
+    <p>© 2026 متجر E.M.R لأجهزة اللابتوب - جميع الحقوق محفوظة</p>
+    <p class="footer-note">📍 الأردن | خدمة التوصيل متوفرة لجميع المحافظات 🚚</p>
+</footer>
+
+</body>
+</html>
