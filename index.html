@@ -5,6 +5,57 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>متجر E.M.R</title>
   <style>
+    /* تنسيق خلفية النافذة المنبثقة (مخفية افتراضياً) */
+    .modal {
+      display: none; 
+      position: fixed; 
+      z-index: 1000; 
+      left: 0;
+      top: 0;
+      width: 100%; 
+      height: 100%; 
+      background-color: rgba(0, 0, 0, 0.6); /* خلفية داكنة شفافة */
+    }
+
+/* صندوق المحتوى الأبيض المتجاوب والواسع */
+    .modal-content {
+      background-color: #ffffff;
+      margin: 5% auto; /* تقليل المسافة العلوية ليتسع بشكل أفضل */
+      padding: 25px;
+      border-radius: 14px;
+      width: 90%; 
+      max-width: 650px; /* 👈 وسعنا الصندوق هنا ليتسع لجميع التفاصيل */
+      max-height: 85vh; /* يمنع الصندوق من تجاوز ارتفاع شاشة الهاتف */
+      overflow-y: auto; /* يتيح التمرير بسلاسة للأسفل إذا كانت المواصفات طويلة */
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+/* ترتيب أسطر المواصفات داخل النافذة المنبثقة */
+    #modal-specs {
+      white-space: pre-line; /* يحافظ على النزول لسطر جديد كما كُتب في النص */
+      line-height: 1.8;      /* يعطي مسافة مريحة بين الأسطر لسهولة القراءة */
+      font-size: 15px;       /* حجم خط مريح للعين على شاشات الهواتف */
+      color: #333333;        /* لون خط واضح ومريح */
+      margin-top: 15px;
+      margin-bottom: 20px;
+    }
+    
+/* زر الإغلاق (X) */
+    .close-btn {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      font-size: 28px;
+      font-weight: bold;
+      color: #1e3c72;
+      cursor: pointer;
+    }
+
+    .close-btn:hover {
+      color: #ff4c4c;
+    }
+
     /* تنسيق صندوق البطاقة بالكامل */
     .product-card {
       width: 280px;              /* عرض البطاقة */
@@ -111,6 +162,62 @@
       font-size: 13px;
       color: #94a3b8;               /* رمادي أفتح قليلاً للملاحظة الفرعية */
     }
+     /* شريط أزرار الأقسام */
+    .filter-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 20px auto 35px auto;
+      flex-wrap: wrap;
+      padding: 0 15px;
+    }
+
+/* تصميم الزر العادي */
+    .filter-btn {
+      background-color: #ffffff;
+      color: #1e3c72;
+      border: 2px solid #1e3c72;
+      padding: 10px 22px;
+      font-size: 15px;
+      font-weight: bold;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      font-family: inherit;
+    }
+
+/* تأثير التمرير بالماوس */
+    .filter-btn:hover {
+      background-color: #f0f4f8;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+
+/* مظهر الزر النشط (المحدد حالياً) */
+    .filter-btn.active {
+      background-color: #1e3c72;
+      color: #ffffff;
+      box-shadow: 0 6px 15px rgba(30, 60, 114, 0.3);
+    }
+    /* زر عرض المزيد */
+    .view-more-btn {
+      background-color: #1e3c72;
+      color: #ffffff;
+      border: none;
+      padding: 10px 20px;
+      font-size: 15px;
+      font-weight: bold;
+      border-radius: 20px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 10px;
+      transition: background-color 0.3s ease;
+    }
+
+    .view-more-btn:hover {
+      background-color: #2a5298;
+    }
     @media (max-width: 768px) {
     .products-container {
       flex-direction: column;
@@ -121,9 +228,31 @@
 </head>
 <body>
   <h1 class="store-title">متجر E.M.R لبيع اجهزة اللابتوب</h1>
+<div class="filter-buttons">
+    <button class="filter-btn active" data-filter="all">الكل</button>
+    <button class="filter-btn" data-filter="study">أجهزة الدراسة</button>
+    <button class="filter-btn" data-filter="design">أجهزة التصميم و البرمجة</button>
+    <button class="filter-btn" data-filter="gaming">أجهزة الألعاب</button>
+</div>  
 <div class="products-container">
   <!-- كود البطاقة الخاص بك -->
-  <div class="product-card">
+  <div class="product-card" 
+     data-category="study"
+     data-title="Lenovo ThinkPad T460"
+     data-price="160 دينار"
+     data-desc="
+  ✅ الجهاز: Lenovo ThinkPad
+  ✅ المعالج: Intel Core i5 الجيل الخامس
+  ✅ التخزين: 256GB SSD سريع جداً
+  ✅ الرام: 8GB قابل للزيادة
+  ✅ البطارية: ممتازة جداً وأداء مستقر
+  ✅ تبريد قوي وتشغيل ثابت
+  ✅ تصميم أنيق وكلاس
+  ✅ كفر الجهاز قوي ومتين
+  ✅ المعاينة والفحص قبل الاستلام 🫡 
+  🎁 مع الجهاز: بكج هدايا (قطعتين) 🎁
+  🛡️ الأجهزة مكفولة 6 اشهر من أي عيوب مصنعية"
+     data-images="images/lenovo-t460.png,images/laptop2.jpeg,images/laptop3.jpeg">
     <h2>Lenovo ThinkPad T460</h2>
     <img src="images/lenovo-t460.png" alt="صورة لابتوب لينوفو T460">    
     <ul>
@@ -134,11 +263,27 @@
       <li>وزن خفيف</li>
     </ul>
     <p class="price">160 JD</p>
-    <a href="https://wa.me/962796611074?text=مرحبا%20اريد%20جهاز%20لينوفو" class="order-btn" target="_blank">أطلبه الآن عبر الواتساب</a>
+    <button class="view-more-btn">عرض المزيد</button>
   </div>
 
   <!-- كود البطاقة الخاص بك -->
-  <div class="product-card">
+  <div class="product-card" 
+     data-category="study"
+     data-title="Toshiba"
+     data-price="100 دينار"
+     data-desc="
+  ✅ الجهاز: Toshiba
+  ✅ المعالج: Intel Core i3
+  ✅ التخزين: 160GB HDD سريع جداً
+  ✅ الرام: 4GB قابل للزيادة
+  ✅ البطارية: ممتازة جداً وأداء مستقر
+  ✅ تبريد قوي وتشغيل ثابت
+  ✅ تصميم أنيق وكلاس
+  ✅ كفر الجهاز قوي ومتين
+  ✅ المعاينة و الفحص قبل الاستلام 🫡 
+  🎁 مع الجهاز: بكج هدايا (قطعتين) 🎁
+  🛡️ الأجهزة مكفولة من أي عيوب مصنعية"
+     data-images="images/lenovo-t460.png,images/laptop2.jpeg,images/laptop3.jpeg">  
     <h2>Toshiba</h2>
     <img src="images/laptop2.jpeg" alt="صورة لابتوب توشيبا">    
     <ul>
@@ -149,10 +294,10 @@
       <li>وزن خفيف</li>
     </ul>
     <p class="price">100 JD</p>
-    <a href="https://wa.me/962796611074" class="order-btn" target="_blank">أطلبه الآن عبر الواتساب</a>
+    <button class="view-more-btn">عرض المزيد</button>
   </div>
     <!-- كود البطاقة الخاص بك -->
-  <div class="product-card">
+  <div class="product-card" data-category="study">
     <h2>Lenovo</h2>
     <img src="images/laptop3.jpeg" alt="صورة لابتوب لينوفو">    
     <ul>
@@ -165,7 +310,7 @@
     <p class="price">150 JD</p>
     <a href="https://wa.me/962796611074" class="order-btn" target="_blank">أطلبه الآن عبر الواتساب</a>
   </div>
-    <div class="product-card">
+    <div class="product-card" data-category="study">
     <h2>HP</h2>
     <img src="images/laptop4.jpeg" alt="صورة لابتوب لينوفو">    
     <ul>
@@ -179,11 +324,162 @@
     <a href="https://wa.me/962796611074" class="order-btn" target="_blank">أطلبه الآن عبر الواتساب</a>
   </div>
 
+    <p id="no-products-msg" style="display: none; font-size: 18px; color: #1e3c72; text-align: center; width: 100%; margin: 40px 0; font-weight: bold;">
+    ⏳ سيتم توفير أجهزة مميزة في هذا القسم قريباً!
+</p>
+
 </div>
     <footer class="store-footer">
     <p>© 2026 متجر E.M.R لأجهزة اللابتوب - جميع الحقوق محفوظة</p>
     <p class="footer-note">📍 الأردن | خدمة التوصيل متوفرة لجميع المحافظات 🚚</p>
 </footer>
+
+<!-- النافذة المنبثقة (Modal) -->
+<div id="product-modal" class="modal">
+  <div class="modal-content">
+        <!-- زر الإغلاق -->
+    <span class="close-btn" id="close-modal">&times;</span>
+        
+    <!-- معرض الصور مع أزرار التنقل -->
+  <div style="position: relative; text-align: center; margin-bottom: 15px;">
+    <button id="prev-img-btn" type="button" style="position: absolute; right: 10px; top: 45%; background: rgba(30,60,114,0.7); color: white; border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-size: 18px;">❯</button>
+            
+    <img id="modal-img" src="" alt="صورة اللابتوب" style="width: 100%; height: 320px; object-fit: cover; border-radius: 8px;">
+            
+    <button id="next-img-btn" type="button" style="position: absolute; left: 10px; top: 45%; background: rgba(30,60,114,0.7); color: white; border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-size: 18px;">❮</button>
+  </div>
+        
+        <!-- تفاصيل الجهاز -->
+    <h2 id="modal-title" style="color: #1e3c72; margin-bottom: 10px;">اسم الجهاز</h2>
+    <ul id="modal-specs" style="list-style-type: none; padding: 0; line-height: 1.8; margin-bottom: 20px;">
+            <!-- سيتم إضافة المواصفات هنا برمجياً -->
+    </ul>
+        
+        <!-- زر الواتساب -->
+    <a id="modal-whatsapp" href="#" target="_blank" style="display: block; background-color: #25D366; color: white; text-align: center; padding: 12px; border-radius: 25px; text-decoration: none; font-weight: bold;">
+            💬 اطلب عبر واتساب
+    </a>
+  </div>
+
+</div>
+
+<script>
+    // تحديد جميع أزرار الفلترة وجميع بطاقات المنتجات
+     const filterButtons = document.querySelectorAll('.filter-btn');
+     const productCards = document.querySelectorAll('.product-card');
+     const noProductsMsg = document.getElementById('no-products-msg');
+
+      filterButtons.forEach(button => {
+     button.addEventListener('click', () => {
+            // 1. إزالة كلاس active من جميع الأزرار وإضافته للزر المضغوط فقط
+      filterButtons.forEach(btn => btn.classList.remove('active'));
+     button.classList.add('active');
+
+            // 2. معرفة القسم المختار
+     const selectedFilter = button.getAttribute('data-filter');
+     let visibleCardsCount = 0; // عداد لمعرفة عدد الأجهزة المعروضة
+
+            // 3. إظهار أو إخفاء البطاقات حسب القسم
+      productCards.forEach(card => {
+     const cardCategory = card.getAttribute('data-category');
+
+  if (selectedFilter === 'all' || cardCategory === selectedFilter) {
+     card.style.display = 'block';
+     visibleCardsCount++; // زيادة العداد عند إظهار بطاقة
+            } else {
+     card.style.display = 'none';
+            }
+        });
+
+            // إذا كان عدد البطاقات الظاهرة صفر، نظهر الرسالة
+  if (visibleCardsCount === 0) {
+     noProductsMsg.style.display = 'block';
+            } else {
+     noProductsMsg.style.display = 'none';
+            }
+        });
+    });
+
+// 1. جلب عناصر النافذة المنبثقة ومعرض الصور
+     const modal = document.getElementById('product-modal');
+     const closeModal = document.getElementById('close-modal');
+     const modalImg = document.getElementById('modal-img');
+     const modalTitle = document.getElementById('modal-title');
+     const modalSpecs = document.getElementById('modal-specs');
+     const modalWhatsapp = document.getElementById('modal-whatsapp');
+     const prevImgBtn = document.getElementById('prev-img-btn');
+     const nextImgBtn = document.getElementById('next-img-btn');
+
+// متغيرات لتتبع صور الجهاز الحالي
+     let currentImages = [];
+     let currentImageIndex = 0;
+
+// 2. تفعيل أزرار "عرض المزيد"
+     const viewMoreButtons = document.querySelectorAll('.view-more-btn');
+
+           viewMoreButtons.forEach(button => {
+     button.addEventListener('click', () => {
+     const card = button.closest('.product-card');
+
+        // جلب البيانات من البطاقة
+     const title = card.getAttribute('data-title');
+     const price = card.getAttribute('data-price');
+     const desc = card.getAttribute('data-desc');
+        
+        // جلب الصور: إذا وجدت data-images نأخذها، وإلا نأخذ data-img القديمة
+     const imagesAttr = card.getAttribute('data-images') || card.getAttribute('data-img');
+        
+        // تحويل النص المفصول بفواصل إلى قائمة صور حقيقية
+           currentImages = imagesAttr.split(',');
+           currentImageIndex = 0; // البدء دائماً من الصورة الأولى
+
+        // تعبئة البيانات في النافذة
+           modalTitle.textContent = title;
+           modalImg.src = currentImages[currentImageIndex]; // عرض أول صورة
+        
+           modalSpecs.innerHTML = `
+           <li>💰 <strong>السعر:</strong> ${price}</li>
+           <li>📝 <strong>المواصفات والوصف:</strong> ${desc}</li>
+        `;
+
+        // تجهيز رابط الواتساب برقمك ورسالة الطلب
+     const phone = "962796611074";
+     const message = `مرحباً، أود الاستفسار عن جهاز ${title} بسعر ${price}`;
+           modalWhatsapp.href = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+
+        // إظهار النافذة
+           modal.style.display = 'block';
+        });
+    });
+
+// 3. أزرار تقليب الصور (السابق والتالي)
+           nextImgBtn.addEventListener('click', () => {
+  if (currentImages.length > 1) {
+        currentImageIndex = (currentImageIndex + 1) % currentImages.length;
+           modalImg.src = currentImages[currentImageIndex];
+        }
+    });
+
+           prevImgBtn.addEventListener('click', () => {
+  if (currentImages.length > 1) {
+        // الانتقال للصورة السابقة والرجوع لآخر صورة إذا كنا في البداية
+           currentImageIndex = (currentImageIndex - 1 + currentImages.length) % currentImages.length;
+           modalImg.src = currentImages[currentImageIndex];
+        }
+    });
+
+// 4. إغلاق النافذة
+           closeModal.addEventListener('click', () => {
+           modal.style.display = 'none';
+    });
+
+           window.addEventListener('click', (event) => {
+  if (event.target === modal) {
+           modal.style.display = 'none';
+        }
+    });
+
+</script>
 
 </body>
 </html>
