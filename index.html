@@ -1,10 +1,18 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet"> 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>متجر E.M.R</title>
   <style>
+
+  * {
+      font-family: 'Cairo', sans-serif !important;
+    }
+
     /* تنسيق خلفية النافذة المنبثقة (مخفية افتراضياً) */
     .modal {
       display: none; 
@@ -44,11 +52,20 @@
 /* زر الإغلاق (X) */
     .close-btn {
       position: absolute;
-      top: 15px;
-      right: 20px;
-      font-size: 28px;
+      top: 10px;
+      left: 10px;
+      width: 36px;
+      height: 36px;
+      background-color: #ffffff;
+      color: #333333;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
       font-weight: bold;
-      color: #1e3c72;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      z-index: 15;
       cursor: pointer;
     }
 
@@ -66,6 +83,7 @@
       font-family: sans-serif;   /* نوع خط مريح للقراءة */
       background-color: #ffffff;    /* لون خلفية البطاقة */
       transition: transform 0.3s ease, box-shadow 0.3s ease; /* سرعة الحركة ونعومتها (0.3 ثانية) */
+      position: relative;
     }
     .product-card:hover {
       transform: translateY(-8px); /* رفع البطاقة للأعلى بمقدار 8 بكسل */
@@ -83,6 +101,29 @@
     .product-card ul li {
       border-bottom: 1px dashed #edf2f7; /* خط منقط خفيف يفصل بين كل معلومة وأخرى */
       padding: 4px 0;
+    }
+    /* التنسيق الأساسي للشارة */
+    .badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 6px;
+      color: #ffffff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+      z-index: 2;
+    }
+
+/* لون حالة المستعمل */
+    .badge.used {
+      background-color: #e53935;
+    }
+
+/* لون حالة الجديد */
+    .badge.new {
+      background-color: #2e7d32;
     }
     body {
       margin: 0;
@@ -126,11 +167,12 @@
     .order-btn:hover {
       background-color: #1ebe5d;              /* درجة خضراء أفتح أو أغمق للتفاعل */
     }
-    .product-card .price {
-      font-size: 20px;
-      font-weight: bold;
+    .product-card .price {                    /* تنسيق السعر البارز */
+      font-size: 22px;
+      font-weight: 800;
       color: #e63946;           /* لون أحمر مميز وجذاب للأسعار */
-      margin: 12px 0;
+      margin: 14px 0;
+      letter-spacing: 0.5px;
       text-align: center;       /* توسيط السعر ليظهر متزناً فوق الزر */
     }
     .store-title {
@@ -202,28 +244,77 @@
     }
     /* زر عرض المزيد */
     .view-more-btn {
-      background-color: #1e3c72;
+      background: linear-gradient(135deg, #ff8c00, #ff5722);
       color: #ffffff;
       border: none;
       padding: 10px 20px;
-      font-size: 15px;
-      font-weight: bold;
-      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: 'Cairo', sans-serif;
+      border-radius: 25px; /* شكل كبسولة أنيق */
       cursor: pointer;
+      box-shadow: 0 4px 14px rgba(255, 87, 34, 0.35);
+      transition: all 0.3s ease;
+      display: inline-block;
+    }
+    /* تأثير مرور الفأرة */
+    .view-more-btn:hover {
+      background: linear-gradient(135deg, #ff9800, #f44336);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(255, 87, 34, 0.45);
+    }
+/* =====================================
+   📱 تحسينات مخصصة لشاشات الهواتف الذكية
+   ===================================== */
+    @media (max-width: 768px) {
+    /* 1. أزرار الفئات العلوية */            /* 1. أزرار الفئات العلوية (شبكة من صفين متناسقين) */
+    .filter-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr; /* عمودان متساويان */
+      gap: 10px; /* مسافة متناسقة بين الأزرار */
+      padding: 0 15px;
       width: 100%;
-      margin-top: 10px;
-      transition: background-color 0.3s ease;
+      box-sizing: border-box;
     }
 
-    .view-more-btn:hover {
-      background-color: #2a5298;
+    .filter-btn {
+      width: 100%;
+      font-size: 13px;
+      padding: 10px;
+      text-align: center;
     }
-    @media (max-width: 768px) {
+
+    /* 2. شبكة المنتجات في الهاتف */
     .products-container {
-      flex-direction: column;
-      align-items: center;
+      display: flex !important;
+      flex-direction: column; /* بطاقة واحدة في كل سطر */
+      align-items: center !important;
+      justify-content: center !important;
+      width: 100% !important;
+      padding: 10px 0 !important;
+      margin: 0 auto !important;
+      box-sizing: border-box !important;
     }
+
+    .product-card {
+      width: 90% !important;
+      max-width: 330px !important; /* حجم بطاقة مثالي للهاتف */
+      margin: 0 auto 20px auto !important; /* يضمن توسيط البطاقة تماماً في منتصف الشاشة */
+      box-sizing: border-box !important;
     }
+
+    /* 3. النافذة المنبثقة ومعرض الصور */
+    .modal-content {
+      width: 92%; /* استغلال أفضل لعرض شاشة الهاتف */
+      margin: 5% auto;
+      padding: 15px;
+      max-height: 90vh; /* التأكد من بقاء الصندوق داخل الشاشة */
+    }
+
+    #modal-img {
+      height: 200px !important; /* ارتفاع متناسق للصورة على الهاتف */
+    }
+}
   </style>
 </head>
 <body>
@@ -253,14 +344,15 @@
   🎁 مع الجهاز: بكج هدايا (قطعتين) 🎁
   🛡️ الأجهزة مكفولة 6 اشهر من أي عيوب مصنعية"
      data-images="images/lenovo-t460.png,images/laptop2.jpeg,images/laptop3.jpeg">
+    <span class="badge used">مستعمل بحالة الجديد</span>
     <h2>Lenovo ThinkPad T460</h2>
     <img src="images/lenovo-t460.png" alt="صورة لابتوب لينوفو T460">    
     <ul>
-      <li>المعالج: Intel Core i5 الجيل الخامس</li>
-      <li>الرام: RAM 8 GB</li>
-      <li>التخزين: SSD 256 GB</li>
-      <li>بطارية ممتازة</li>
-      <li>وزن خفيف</li>
+      <li>🧠 المعالج: Intel Core i5 الجيل الخامس</li>
+      <li>⚡ الرام: RAM 8 GB</li>
+      <li>💾 التخزين: SSD 256 GB</li>
+      <li>🔋 بطارية ممتازة</li>
+      <li>🪶 وزن خفيف</li>
     </ul>
     <p class="price">160 JD</p>
     <button class="view-more-btn">عرض المزيد</button>
@@ -283,7 +375,8 @@
   ✅ المعاينة و الفحص قبل الاستلام 🫡 
   🎁 مع الجهاز: بكج هدايا (قطعتين) 🎁
   🛡️ الأجهزة مكفولة من أي عيوب مصنعية"
-     data-images="images/lenovo-t460.png,images/laptop2.jpeg,images/laptop3.jpeg">  
+     data-images="images/lenovo-t460.png,images/laptop2.jpeg,images/laptop3.jpeg">
+    <span class="badge new">جديد بالكرتونة</span>  
     <h2>Toshiba</h2>
     <img src="images/laptop2.jpeg" alt="صورة لابتوب توشيبا">    
     <ul>
