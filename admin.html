@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<!-- تحديد لغة الصفحة كالعربية واتجاه النص من اليمين إلى اليسار -->
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>لوحة التحكم - إدارة المنتجات</title>
+</head>
+<body>
+
+    <!-- عنوان النموذج، وسيتم تغييره ديناميكياً عند بدء التعديل -->
+    <h2 id="form-heading">إضافة جهاز جديد</h2>
+
+    <!-- نموذج إدخال وتعديل بيانات الجهاز -->
+    <form id="product-form">
+        <!-- 1. اسم الجهاز -->
+        <label for="device-name">اسم الجهاز:</label><br>
+        <input type="text" id="device-name" placeholder="مثال: Lenovo ThinkPad T460" required>
+        <br><br>
+        
+        <!-- 2. السعر بالدينار -->
+        <label for="device-price">السعر (بالدينار):</label><br>
+        <input type="number" id="device-price" placeholder="مثال: 160" required>
+        <br><br>
+        
+        <!-- 3. مسارات الصور المتعددة (كل رابط في سطر منفصل) -->
+        <label for="device-images">مسارات الصور (اكتب كل مسار صورة في سطر منفصل):</label><br>
+        <textarea id="device-images" rows="3" cols="45" placeholder="images/laptop1.png&#10;images/laptop2.jpg&#10;images/laptop3.jpg" required></textarea>
+        <br><br>
+
+        <!-- 4. قائمة اختيار حالة الجهاز -->
+        <label for="device-status">حالة الجهاز:</label><br>
+        <select id="device-status" required>
+            <option value="" disabled selected>اختر حالة الجهاز</option>
+            <option value="new">جديد بالكرتونة</option>
+            <option value="used">مستعمل بحالة الجديد</option>
+        </select>
+        <br><br>
+
+        <!-- 5. قائمة اختيار قسم الجهاز للفلترة -->
+        <label for="device-category">قسم الجهاز:</label><br>
+        <select id="device-category" required>
+            <option value="" disabled selected>اختر قسم الجهاز</option>
+            <option value="study">أجهزة الدراسة</option>
+            <option value="gaming">أجهزة الألعاب</option>
+            <option value="design">أجهزة التصميم و البرمجة</option>
+        </select>
+        <br><br>
+        
+        <!-- 6. المواصفات السريعة لبطاقة المتجر الخارجية -->
+        <label for="device-quick-specs">المواصفات السريعة للبطاقة (كل نقطة في سطر منفصل):</label><br>
+        <textarea id="device-quick-specs" rows="5" cols="45" placeholder="🧠 المعالج: Intel Core i5&#10;⚡ الرام: RAM 8 GB&#10;💾 التخزين: SSD 256 GB&#10;🔋 بطارية ممتازة&#10;🪶 وزن خفيف" required></textarea>
+        <br><br>
+
+        <!-- 7. التفاصيل الكاملة للنافذة المنبثقة -->
+        <label for="device-desc">التفاصيل الكاملة (تظهر في نافذة عرض المزيد):</label><br>
+        <textarea id="device-desc" rows="6" cols="45" placeholder="اكتب هنا التفاصيل الكاملة، الهدايا، مدة الكفالة، شروط الفحص..." required></textarea>
+        <br><br>
+        
+        <!-- زر الإرسال والحفظ (يتغير نصه ولونه حسب الوضع: إضافة أو تعديل) -->
+        <button type="submit" id="submit-btn" style="padding: 10px 20px; font-weight: bold; cursor: pointer;">إضافة الجهاز للمتجر</button>
+        <!-- زر اختياري لإلغاء التعديل والعودة لوضع الإضافة الجديدة -->
+        <button type="button" id="cancel-edit-btn" style="display: none; padding: 10px 15px; margin-right: 10px; cursor: pointer;">إلغاء التعديل</button>
+    </form>
+
+    <hr style="margin: 30px 0;">
+
+    <!-- جدول إدارة المنتجات المخزنة -->
+    <h2>إدارة الأجهزة المضافة</h2>
+    <table border="1" style="width: 100%; border-collapse: collapse; text-align: center;">
+        <thead>
+            <tr style="background-color: #f2f2f2;">
+                <th>الصورة الرئيسية</th>
+                <th>اسم الجهاز</th>
+                <th>السعر</th>
+                <th>القسم</th>
+                <th>الإجراء</th>
+            </tr>
+        </thead>
+        <tbody id="products-table-body">
+            <!-- سيتم توليد الصفوف عبر JavaScript -->
+        </tbody>
+    </table>
+
+    <script>
+        // جلب عناصر النموذج والجدول للتحكم بها
+        const productForm = document.getElementById('product-form');
+        const formHeading = document.getElementById('form-heading');
+        const submitBtn = document.getElementById('submit-btn');
+        const cancelEditBtn = document.getElementById('cancel-edit-btn');
+        const tableBody = document.getElementById('products-table-body');
+
+        // المتغير المركزي: إذا كان null فنحن في وضع "إضافة جهاز"
+        // وإذا احتوى على رقم الفهرس (Index) فنحن في وضع "تعديل جهاز موجود"
+        let editIndex = null;
+
+        // ==========================================================
+        // 1. دالة عرض المنتجات في الجدول
+        // ==========================================================
+        function displayProducts() {
+            // قراءة البيانات من localStorage أو إنشاء مصفوفة فارغة
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+
+            // تفريغ محتوى الجدول لتجنب التكرار قبل إعادة بنائه
+            tableBody.innerHTML = '';
+
+            if (products.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="5" style="padding: 15px;">لا توجد أجهزة مضافة حالياً.</td></tr>`;
+                return;
+            }
+
+            // توليد صف لكل جهاز في المصفوفة
+            products.forEach((product, index) => {
+                // استخراج الصورة الأولى فقط للمعاينة في الجدول
+                const firstImg = product.image ? product.image.split(',')[0].trim() : '';
+
+                // استخدام display: flex و flex-direction: column لجعل الزرين فوق بعضهما
+                const row = `
+                    <tr>
+                        <td style="padding: 8px;">
+                            <img src="${firstImg}" width="60" height="40" style="object-fit: cover; border-radius: 4px;">
+                        </td>
+                        <td>${product.name}</td>
+                        <td>${product.price} دينار</td>
+                        <td>${product.category}</td>
+                        <td style="padding: 8px;">
+                            <div style="display: flex; flex-direction: column; gap: 6px; width: 100px; margin: 0 auto;">
+                                <!-- زر التعديل (أزرق) -->
+                                <button onclick="startEdit(${index})" style="background-color: #0288d1; color: white; border: none; padding: 6px; border-radius: 4px; cursor: pointer;">تعديل ✏️</button>
+                                <!-- زر الحذف (أحمر) -->
+                                <button onclick="deleteProduct(${index})" style="background-color: #e53935; color: white; border: none; padding: 6px; border-radius: 4px; cursor: pointer;">حذف 🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+
+                tableBody.innerHTML += row;
+            });
+        }
+
+        // ==========================================================
+        // 2. دالة بدء وضع التعديل وملء الحقول
+        // ==========================================================
+        function startEdit(index) {
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const product = products[index];
+
+            if (!product) return;
+
+            // تعيين مؤشر التعديل ليعرف المتصفح أي عنصر سنحدّث
+            editIndex = index;
+
+            // ملء حقول الإدخال بالبيانات الحالية للجهاز
+            document.getElementById('device-name').value = product.name;
+            document.getElementById('device-price').value = product.price;
+            document.getElementById('device-status').value = product.status;
+            document.getElementById('device-category').value = product.category;
+            document.getElementById('device-quick-specs').value = product.quickSpecs || '';
+            document.getElementById('device-desc').value = product.desc || '';
+
+            // تحويل مسارات الصور المفصولة بفواصل إلى أسطر منفصلة لسهولة قراءتها وتعديلها
+            if (product.image) {
+                document.getElementById('device-images').value = product.image.split(',').join('\n');
+            }
+
+            // تعديل واجهة النموذج لتعكس وضع التعديل
+            formHeading.textContent = `تعديل بيانات الجهاز: ${product.name}`;
+            submitBtn.textContent = 'حفظ التعديلات 💾';
+            submitBtn.style.backgroundColor = '#0288d1';
+            submitBtn.style.color = '#ffffff';
+            cancelEditBtn.style.display = 'inline-block';
+
+            // التمرير بسلاسة إلى أعلى الصفحة للوصول للنموذج
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ==========================================================
+        // 3. دالة إلغاء التعديل والعودة للوضع الافتراضي
+        // ==========================================================
+        function resetFormMode() {
+            editIndex = null;
+            productForm.reset();
+            formHeading.textContent = 'إضافة جهاز جديد';
+            submitBtn.textContent = 'إضافة الجهاز للمتجر';
+            submitBtn.style.backgroundColor = '';
+            submitBtn.style.color = '';
+            cancelEditBtn.style.display = 'none';
+        }
+
+        cancelEditBtn.addEventListener('click', resetFormMode);
+
+        // ==========================================================
+        // 4. دالة حذف الجهاز
+        // ==========================================================
+        function deleteProduct(index) {
+            if (confirm('هل أنت متأكد من رغبتك في حذف هذا الجهاز من المتجر؟')) {
+                let products = JSON.parse(localStorage.getItem('products')) || [];
+                products.splice(index, 1);
+                localStorage.setItem('products', JSON.stringify(products));
+
+                // إذا حُذف الجهاز الذي يتم تعديله حالياً، نلغي وضع التعديل
+                if (editIndex === index) {
+                    resetFormMode();
+                }
+
+                displayProducts();
+            }
+        }
+
+        // ==========================================================
+        // 5. حفظ البيانات (سواء إضافة جديدة أو تحديث تعديل)
+        // ==========================================================
+        productForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // تنظيف مسارات الصور وتحويلها من أسطر إلى نص مفصول بفواصل
+            const rawImages = document.getElementById('device-images').value;
+            const cleanedImages = rawImages
+                .split('\n')
+                .map(link => link.trim())
+                .filter(link => link !== '')
+                .join(',');
+
+            // بناء كائن الجهاز الجديد
+            const productData = {
+                name: document.getElementById('device-name').value,
+                price: document.getElementById('device-price').value,
+                image: cleanedImages,
+                status: document.getElementById('device-status').value,
+                category: document.getElementById('device-category').value,
+                quickSpecs: document.getElementById('device-quick-specs').value,
+                desc: document.getElementById('device-desc').value
+            };
+
+            let products = JSON.parse(localStorage.getItem('products')) || [];
+
+            // التحقق من الحالة: تعديل جهاز موجود أم إضافة جهاز جديد؟
+            if (editIndex !== null) {
+                // استبدال بيانات الجهاز القديم بالبيانات المعدّلة
+                products[editIndex] = productData;
+                alert('تم حفظ التعديلات بنجاح! 💾');
+            } else {
+                // إضافة جهاز جديد لمصفوفة الأجهزة
+                products.push(productData);
+                alert('تمت إضافة الجهاز الجديد بنجاح! ✅');
+            }
+
+            // حفظ المصفوفة المحدثة في الذاكرة المحلية
+            localStorage.setItem('products', JSON.stringify(products));
+
+            // إعادة النموذج إلى وضع الإضافة الافتراضي وتحديث الجدول
+            resetFormMode();
+            displayProducts();
+        });
+
+        // تشغيل الدالة لعرض الأجهزة مباشرة فور تحميل الصفحة
+        displayProducts();
+    </script>
+</body>
+</html>
