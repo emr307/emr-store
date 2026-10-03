@@ -1,19 +1,204 @@
 <!DOCTYPE html>
+<!-- تحديد نوع المستند كـ HTML5، مع تعيين لغة الصفحة (العربية) واتجاه النص من اليمين لليسار -->
 <html lang="ar" dir="rtl">
 <head>
+  <!-- ربط خط Cairo من مكتبة Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet"> 
+  
+  <!-- ضبط ترميز النصوص لدعم الحروف العربية بالكامل -->
   <meta charset="UTF-8">
+  <!-- ملاءمة مقاسات الصفحة تلقائياً مع أحجام شاشات الهواتف بنسبة 1:1 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
   <title>متجر E.M.R</title>
-  <style>
 
-  * {
-      font-family: 'Cairo', sans-serif !important;
+  <style>
+    /* تطبيق التنسيق العام على كل عناصر المتجر */
+    * {
+      font-family: 'Cairo', sans-serif !important; /* اعتماد خط Cairo للجميع */
+      box-sizing: border-box; /* احتساب الفراغات الداخلية والحدود ضمن العرض الإجمالي */
     }
 
-    /* تنسيق خلفية النافذة المنبثقة (مخفية افتراضياً) */
+    /* خلفية وتصميم جسم الصفحة */
+    body {
+      margin: 0; /* إزالة الهوامش الافتراضية للمتصفح */
+      padding: 20px; /* مسافة أمان داخلية للمحتوى */
+      /* دمج صورة الخلفية cover.jpeg مع طبقة تدرج أبيض شفافة لتوضيح النصوص */
+      background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.7)), url('images/cover.jpeg');
+      background-attachment: fixed; /* تثبيت الخلفية أثناء التمرير */
+      background-size: cover; /* جعل الخلفية تغطي كامل أبعاد الشاشة */
+      background-position: center; /* توسيط الصورة في الخلفية */
+    }
+
+    /* شريط عنوان المتجر الرئيسي */
+    .store-title {
+      display: block;
+      width: fit-content; /* جعل العرض مطابقاً لطول النص فقط */
+      margin: 25px auto; /* توسيط العنوان مع مسافة علوية وسفلية */
+      padding: 12px 35px;
+      background-color: #ffffff;
+      border-radius: 8px; /* تدوير ناعم للحواف */
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* ظل خفيف */
+      font-size: 26px;
+      color: #1e3c72; /* الكحلي المعتمد للمتجر */
+      text-align: center;
+    }
+
+    /* شريط أزرار الفلترة */
+    .filter-buttons {
+      display: flex; /* محاذاة الأزرار أفقياً */
+      justify-content: center; /* توسيطها في منتصف الصفحة */
+      gap: 12px; /* مسافة فاصلة بين كل زر وآخر */
+      margin: 20px auto 35px auto;
+      flex-wrap: wrap; /* النزول لسطر جديد عند ضيق الشاشة */
+      padding: 0 15px;
+    }
+
+    /* تصميم أزرار الأقسام */
+    .filter-btn {
+      background-color: #ffffff;
+      color: #1e3c72;
+      border: 2px solid #1e3c72;
+      padding: 10px 22px;
+      font-size: 15px;
+      font-weight: bold;
+      border-radius: 25px; /* شكل كبسولة */
+      cursor: pointer; /* إظهار مؤشر اليد */
+      transition: all 0.3s ease; /* انتقال سلس للحركات */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .filter-btn:hover {
+      background-color: #f0f4f8;
+      transform: translateY(-2px); /* رفعة خفيفة للتفاعل */
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    /* مظهر القسم النشط حالياً */
+    .filter-btn.active {
+      background-color: #1e3c72;
+      color: #ffffff;
+      box-shadow: 0 6px 15px rgba(30, 60, 114, 0.3);
+    }
+
+    /* الحاوية الجامعة لبطاقات اللابتوبات */
+    .products-container {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    /* بطاقة المنتج الفردية */
+    .product-card {
+      width: 280px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      background-color: #ffffff;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative; /* لتثبيت شارات الحالة بداخلها */
+    }
+
+    .product-card:hover {
+      transform: translateY(-8px); /* رفع البطاقة لأعلى عند مرور الفأرة */
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    /* صورة واجهة البطاقة */
+    .product-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover; /* ملاءمة الصورة دون مطها */
+      border-radius: 6px;
+    }
+
+    /* قائمة المواصفات السريعة بالبطاقة */
+    .product-card ul {
+      list-style: none; /* إزالة النقاط السوداء الافتراضية */
+      padding: 0;
+      margin: 15px 0;
+      font-size: 14px;
+      color: #4a5568;
+      line-height: 1.8;
+    }
+
+    .product-card ul li {
+      border-bottom: 1px dashed #edf2f7; /* خط فاصل رمادي منقط */
+      padding: 4px 0;
+    }
+
+    /* شارة حالة الجهاز (جديد أو مستعمل) */
+    .badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 6px;
+      color: #ffffff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+      z-index: 2;
+    }
+
+    .badge.used { background-color: #e53935; } /* أحمر للمستعمل */
+    .badge.new { background-color: #2e7d32; }  /* أخضر للجديد */
+
+    /* سعر اللابتوب البارز */
+    .product-card .price {
+      font-size: 22px;
+      font-weight: 800;
+      color: #e63946;
+      margin: 14px 0;
+      letter-spacing: 0.5px;
+      text-align: center;
+    }
+
+    /* زر عرض المزيد التفاعلي بالبطاقة */
+    .view-more-btn {
+      background: linear-gradient(135deg, #ff8c00, #ff5722);
+      color: #ffffff;
+      border: none;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 25px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(255, 87, 34, 0.35);
+      transition: all 0.3s ease;
+      display: block;
+      width: 100%;
+    }
+
+    .view-more-btn:hover {
+      background: linear-gradient(135deg, #ff9800, #f44336);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(255, 87, 34, 0.45);
+    }
+
+    /* زر الطلب المباشر عبر واتساب للبطاقات الثابتة */
+    .order-btn {
+      display: block;
+      text-align: center;
+      text-decoration: none;
+      background-color: #25D366;
+      color: white;
+      border-radius: 6px;
+      padding: 10px 15px;
+      font-size: 16px;
+      transition: background-color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .order-btn:hover {
+      background-color: #1ebe5d;
+    }
+
+    /* النافذة المنبثقة الأولى لتفاصيل الجهاز (Modal) */
     .modal {
       display: none; 
       position: fixed; 
@@ -25,31 +210,41 @@
       background-color: rgba(0, 0, 0, 0.6); /* خلفية داكنة شفافة */
     }
 
-/* صندوق المحتوى الأبيض المتجاوب والواسع */
     .modal-content {
       background-color: #ffffff;
-      margin: 5% auto; /* تقليل المسافة العلوية ليتسع بشكل أفضل */
+      margin: 5% auto;
       padding: 25px;
       border-radius: 14px;
       width: 90%; 
-      max-width: 650px; /* 👈 وسعنا الصندوق هنا ليتسع لجميع التفاصيل */
-      max-height: 85vh; /* يمنع الصندوق من تجاوز ارتفاع شاشة الهاتف */
-      overflow-y: auto; /* يتيح التمرير بسلاسة للأسفل إذا كانت المواصفات طويلة */
+      max-width: 650px;
+      max-height: 85vh;
+      overflow-y: auto; /* تمكين التمرير الداخلي عند طول المواصفات */
       position: relative;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     }
 
-/* ترتيب أسطر المواصفات داخل النافذة المنبثقة */
+    /* مؤشر الفأرة التفاعلي على صورة النافذة لإعلام المستخدم بإمكانية تكبيرها */
+    #modal-img {
+      cursor: pointer; /* يظهر مؤشر اليد عند الوقوف على الصورة */
+      transition: opacity 0.2s ease;
+    }
+
+    #modal-img:hover {
+      opacity: 0.92; /* تعتيم بسيط جداً للتفاعل */
+    }
+
     #modal-specs {
-      white-space: pre-line; /* يحافظ على النزول لسطر جديد كما كُتب في النص */
-      line-height: 1.8;      /* يعطي مسافة مريحة بين الأسطر لسهولة القراءة */
-      font-size: 15px;       /* حجم خط مريح للعين على شاشات الهواتف */
-      color: #333333;        /* لون خط واضح ومريح */
+      white-space: pre-line; /* الحفاظ على نزول الأسطر كما كُتبت */
+      line-height: 1.8;
+      font-size: 15px;
+      color: #333333;
       margin-top: 15px;
       margin-bottom: 20px;
+      list-style-type: none;
+      padding: 0;
     }
-    
-/* زر الإغلاق (X) */
+
+    /* زر إغلاق النافذة المنبثقة */
     .close-btn {
       position: absolute;
       top: 10px;
@@ -73,506 +268,496 @@
       color: #ff4c4c;
     }
 
-    /* تنسيق صندوق البطاقة بالكامل */
-    .product-card {
-      width: 280px;              /* عرض البطاقة */
-      border: 1px solid #ddd;    /* إطار رمادي خفيف */
-      border-radius: 10px;       /* زوايا دائرية ناعمة */
-      padding: 16px;             /* مسافة وفراغ داخلي */
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* ظل خفيف يعطي بعداً ثلاثياً */
-      font-family: sans-serif;   /* نوع خط مريح للقراءة */
-      background-color: #ffffff;    /* لون خلفية البطاقة */
-      transition: transform 0.3s ease, box-shadow 0.3s ease; /* سرعة الحركة ونعومتها (0.3 ثانية) */
-      position: relative;
-    }
-    .product-card:hover {
-      transform: translateY(-8px); /* رفع البطاقة للأعلى بمقدار 8 بكسل */
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); /* جعل الظل أغمق وأوسع لتبدو البطاقة أقرب */
-    }
-    .product-card ul {
-      list-style: none;         /* إزالة النقاط السوداء التقليدية */
-      padding: 0;
-      margin: 15px 0;
-      font-size: 14px;
-      color: #4a5568;           /* لون رمادي غامق أنيق ومريح للقراءة */
-      line-height: 1.8;         /* مسافة مريحة بين الأسطر */
+    /* =========================================================
+       تنسيقات نافذة تكبير الصورة بالحجم الكامل (Lightbox)
+       ========================================================= */
+    .lightbox {
+      display: none; /* مخفية افتراضياً */
+      position: fixed;
+      z-index: 2000; /* أعلى من كل النوافذ الأخرى */
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.92); /* عتمة سوداء شبه كاملة */
+      justify-content: center; /* توسيط الصورة أفقياً */
+      align-items: center;     /* توسيط الصورة رأسياً */
     }
 
-    .product-card ul li {
-      border-bottom: 1px dashed #edf2f7; /* خط منقط خفيف يفصل بين كل معلومة وأخرى */
-      padding: 4px 0;
+    /* الصورة المكبرة بحجم الشاشة */
+    .lightbox-img {
+      max-width: 90%;
+      max-height: 85vh; /* ألا تتجاوز 85% من ارتفاع شاشة المستخدم */
+      object-fit: contain; /* إظهار كامل تفاصيل وأبعاد الصورة دون أي قص */
+      border-radius: 8px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.8);
+      user-select: none;
     }
-    /* التنسيق الأساسي للشارة */
-    .badge {
+
+    /* زر إغلاق نافذة التكبير */
+    .lightbox-close {
       position: absolute;
-      top: 12px;
-      right: 12px;
-      padding: 4px 10px;
-      font-size: 11px;
-      font-weight: 700;
-      border-radius: 6px;
+      top: 20px;
+      left: 25px;
       color: #ffffff;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-      z-index: 2;
+      font-size: 38px;
+      font-weight: bold;
+      cursor: pointer;
+      z-index: 2010;
+      transition: color 0.2s ease;
     }
 
-/* لون حالة المستعمل */
-    .badge.used {
-      background-color: #e53935;
+    .lightbox-close:hover {
+      color: #ff4c4c;
     }
 
-/* لون حالة الجديد */
-    .badge.new {
-      background-color: #2e7d32;
+    /* أزرار تقليب الصور بالحجم الكبير */
+    .lightbox-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s ease;
+      z-index: 2010;
     }
-    body {
-      margin: 0;
-      padding: 20px;
-          /* تمثيل طبقة التراكب البيضاء الشفافة */
-      background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.7)), url('images/cover.jpeg');
-           /* تثبيت الصورة خلف المحتوى فلا تتحرك عند النزول لأسفل */
-      background-attachment: fixed;
-           /* جعل الصورة تمتد لتغطي كامل خلفية الشاشة */
-      background-size: cover;
-           /* توسيط الصورة */
-      background-position: center;
+
+    .lightbox-nav-btn:hover {
+      background: rgba(255, 255, 255, 0.45);
     }
-    /* ضبط حجم الصورة لتناسب حجم البطاقة بدقة */
-    .product-card img {
-      width: 100%;       /* تجعل عرض الصورة مساوياً تماماً لعرض البطاقة */
-      height: 180px;      /* تحافظ على أبعاد وتناسب الصورة دون تشويه */
-      object-fit: cover;
-      border-radius: 6px; /* انحناء خفيف لزوايا الصورة لتتماشى مع تصميم البطاقة */
-    }
-    .products-container {
-      display: flex;       /* تجعل العناصر بداخلها تصطف بجانب بعضها أفقياً */
-      gap: 20px;          /* تترك مسافة أنيقة بين كل بطاقة وأخرى */
-      flex-wrap: wrap;    /* إذا امتلأ السطر، تنزل البطاقات الزائدة لسطر جديد تلقائياً */
-      justify-content: center; /* توسيط كل البطاقات في منتصف الصفحة */
-    }
-    /* تنسيق زر الطلب */
-    .order-btn {
-      display: block;            /* ليمتد بعرض البطاقة ككتلة واحدة */
-      text-align: center;        /* توسيط النص */
-      text-decoration: none;     /* إزالة الخط الأزرق الافتراضي تحت الرابط */
-      box-sizing: border-box;    /* لضبط الحجم الداخلي بدقة */
-      background-color: #25D366; /* لون واتساب الأخضر */
-      color: white;              /* لون النص بالأبيض */
-      border-radius: 6px;        /* انحناء الزوايا */
-      padding: 10px 15px;        /* المساحة الداخلية */
-      font-size: 16px;           /* حجم الخط */
-      transition: background-color 0.2s ease; /* نعومة تغيير اللون */
-      cursor: pointer;                        /* مؤشر اليد */
-    }
-    .order-btn:hover {
-      background-color: #1ebe5d;              /* درجة خضراء أفتح أو أغمق للتفاعل */
-    }
-    .product-card .price {                    /* تنسيق السعر البارز */
-      font-size: 22px;
-      font-weight: 800;
-      color: #e63946;           /* لون أحمر مميز وجذاب للأسعار */
-      margin: 14px 0;
-      letter-spacing: 0.5px;
-      text-align: center;       /* توسيط السعر ليظهر متزناً فوق الزر */
-    }
-    .store-title {
-      display: block;
-      width: fit-content;            /* يجعل حجم الشريط مناسباً لحجم النص تماماً */
-      margin: 25px auto;             /* يوسط الشريط في منتصف الصفحة ويترك مسافة حوله */
-      padding: 12px 35px;            /* مسافة داخلية مريحة حول النص */
-      background-color: #ffffff;     /* خلفية بيضاء نقية */
-      border-radius: 8px;            /* زوايا دائرية ناعمة */
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* ظل خفيف وأنيق */
-      font-size: 26px;
-      color: #1e3c72;                /* لون كحلي تقني فخم */
-      text-align: center;
-    }
+
+    /* سهم اليمين للسابق في العرض العربي */
+    #lightbox-prev-btn { right: 25px; }
+    /* سهم اليسار للتالي في العرض العربي */
+    #lightbox-next-btn { left: 25px; }
+
+    /* فوتر المتجر */
     .store-footer {
-      margin-top: 40px;             /* مسافة تفصل الشريط عن البطاقات */
-      background-color: #1e293b;    /* كحلي غامق فخم */
-      color: #cbd5e1;               /* لون نص رمادي فاتح ومريح */
+      margin-top: 40px;
+      background-color: #1e293b;
+      color: #cbd5e1;
       text-align: center;
       padding: 20px 10px;
       font-size: 14px;
     }
 
-    .store-footer p {
-      margin: 6px 0;
-    }
+    .store-footer p { margin: 6px 0; }
+    .store-footer .footer-note { font-size: 13px; color: #94a3b8; }
 
-    .store-footer .footer-note {
-      font-size: 13px;
-      color: #94a3b8;               /* رمادي أفتح قليلاً للملاحظة الفرعية */
-    }
-     /* شريط أزرار الأقسام */
-    .filter-buttons {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin: 20px auto 35px auto;
-      flex-wrap: wrap;
-      padding: 0 15px;
-    }
-
-/* تصميم الزر العادي */
-    .filter-btn {
-      background-color: #ffffff;
-      color: #1e3c72;
-      border: 2px solid #1e3c72;
-      padding: 10px 22px;
-      font-size: 15px;
-      font-weight: bold;
-      border-radius: 25px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-      font-family: inherit;
-    }
-
-/* تأثير التمرير بالماوس */
-    .filter-btn:hover {
-      background-color: #f0f4f8;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-    }
-
-/* مظهر الزر النشط (المحدد حالياً) */
-    .filter-btn.active {
-      background-color: #1e3c72;
-      color: #ffffff;
-      box-shadow: 0 6px 15px rgba(30, 60, 114, 0.3);
-    }
-    /* زر عرض المزيد */
-    .view-more-btn {
-      background: linear-gradient(135deg, #ff8c00, #ff5722);
-      color: #ffffff;
-      border: none;
-      padding: 10px 20px;
-      font-size: 14px;
-      font-weight: 700;
-      font-family: 'Cairo', sans-serif;
-      border-radius: 25px; /* شكل كبسولة أنيق */
-      cursor: pointer;
-      box-shadow: 0 4px 14px rgba(255, 87, 34, 0.35);
-      transition: all 0.3s ease;
-      display: inline-block;
-    }
-    /* تأثير مرور الفأرة */
-    .view-more-btn:hover {
-      background: linear-gradient(135deg, #ff9800, #f44336);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 18px rgba(255, 87, 34, 0.45);
-    }
-/* =====================================
-   📱 تحسينات مخصصة لشاشات الهواتف الذكية
-   ===================================== */
+    /* تجاوب الشاشات الصغيرة والهواتف */
     @media (max-width: 768px) {
-    /* 1. أزرار الفئات العلوية */            /* 1. أزرار الفئات العلوية (شبكة من صفين متناسقين) */
-    .filter-buttons {
-      display: grid;
-      grid-template-columns: 1fr 1fr; /* عمودان متساويان */
-      gap: 10px; /* مسافة متناسقة بين الأزرار */
-      padding: 0 15px;
-      width: 100%;
-      box-sizing: border-box;
-    }
+      .filter-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
 
-    .filter-btn {
-      width: 100%;
-      font-size: 13px;
-      padding: 10px;
-      text-align: center;
-    }
+      .products-container {
+        flex-direction: column;
+        align-items: center;
+      }
 
-    /* 2. شبكة المنتجات في الهاتف */
-    .products-container {
-      display: flex !important;
-      flex-direction: column; /* بطاقة واحدة في كل سطر */
-      align-items: center !important;
-      justify-content: center !important;
-      width: 100% !important;
-      padding: 10px 0 !important;
-      margin: 0 auto !important;
-      box-sizing: border-box !important;
-    }
+      .product-card {
+        width: 90% !important;
+        max-width: 330px !important;
+      }
 
-    .product-card {
-      width: 90% !important;
-      max-width: 330px !important; /* حجم بطاقة مثالي للهاتف */
-      margin: 0 auto 20px auto !important; /* يضمن توسيط البطاقة تماماً في منتصف الشاشة */
-      box-sizing: border-box !important;
-    }
+      .modal-content {
+        width: 92%;
+        margin: 5% auto;
+        padding: 15px;
+      }
 
-    /* 3. النافذة المنبثقة ومعرض الصور */
-    .modal-content {
-      width: 92%; /* استغلال أفضل لعرض شاشة الهاتف */
-      margin: 5% auto;
-      padding: 15px;
-      max-height: 90vh; /* التأكد من بقاء الصندوق داخل الشاشة */
-    }
+      #modal-img {
+        height: 200px !important;
+      }
 
-    #modal-img {
-      height: 200px !important; /* ارتفاع متناسق للصورة على الهاتف */
+      .lightbox-nav-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+      }
     }
-}
   </style>
 </head>
 <body>
+
+  <!-- عنوان المتجر الرئيسي -->
   <h1 class="store-title">متجر E.M.R لبيع اجهزة اللابتوب</h1>
-<div class="filter-buttons">
+
+  <!-- شريط تصنيف الأقسام -->
+  <div class="filter-buttons">
     <button class="filter-btn active" data-filter="all">الكل</button>
     <button class="filter-btn" data-filter="study">أجهزة الدراسة</button>
     <button class="filter-btn" data-filter="design">أجهزة التصميم و البرمجة</button>
     <button class="filter-btn" data-filter="gaming">أجهزة الألعاب</button>
-</div>  
-<div class="products-container">
-  <!-- كود البطاقة الخاص بك -->
-  <div class="product-card" 
-     data-category="study"
-     data-title="Lenovo ThinkPad T460"
-     data-price="160 دينار"
-     data-desc="
-  ✅ الجهاز: Lenovo ThinkPad
-  ✅ المعالج: Intel Core i5 الجيل الخامس
-  ✅ التخزين: 256GB SSD سريع جداً
-  ✅ الرام: 8GB قابل للزيادة
-  ✅ البطارية: ممتازة جداً وأداء مستقر
-  ✅ تبريد قوي وتشغيل ثابت
-  ✅ تصميم أنيق وكلاس
-  ✅ كفر الجهاز قوي ومتين
-  ✅ المعاينة والفحص قبل الاستلام 🫡 
-  🎁 مع الجهاز: بكج هدايا (قطعتين) 🎁
-  🛡️ الأجهزة مكفولة 6 اشهر من أي عيوب مصنعية"
-     data-images="images/lenovo-t460.png,images/laptop2.jpeg,images/laptop3.jpeg">
-    <span class="badge used">مستعمل بحالة الجديد</span>
-    <h2>Lenovo ThinkPad T460</h2>
-    <img src="images/lenovo-t460.png" alt="صورة لابتوب لينوفو T460">    
-    <ul>
-      <li>🧠 المعالج: Intel Core i5 الجيل الخامس</li>
-      <li>⚡ الرام: RAM 8 GB</li>
-      <li>💾 التخزين: SSD 256 GB</li>
-      <li>🔋 بطارية ممتازة</li>
-      <li>🪶 وزن خفيف</li>
-    </ul>
-    <p class="price">160 JD</p>
-    <button class="view-more-btn">عرض المزيد</button>
-  </div>
+  </div>  
 
-  <!-- كود البطاقة الخاص بك -->
-  <div class="product-card" 
-     data-category="study"
-     data-title="Toshiba"
-     data-price="100 دينار"
-     data-desc="
-  ✅ الجهاز: Toshiba
-  ✅ المعالج: Intel Core i3
-  ✅ التخزين: 160GB HDD سريع جداً
-  ✅ الرام: 4GB قابل للزيادة
-  ✅ البطارية: ممتازة جداً وأداء مستقر
-  ✅ تبريد قوي وتشغيل ثابت
-  ✅ تصميم أنيق وكلاس
-  ✅ كفر الجهاز قوي ومتين
-  ✅ المعاينة و الفحص قبل الاستلام 🫡 
-  🎁 مع الجهاز: بكج هدايا (قطعتين) 🎁
-  🛡️ الأجهزة مكفولة من أي عيوب مصنعية"
-     data-images="images/lenovo-t460.png,images/laptop2.jpeg,images/laptop3.jpeg">
-    <span class="badge new">جديد بالكرتونة</span>  
-    <h2>Toshiba</h2>
-    <img src="images/laptop2.jpeg" alt="صورة لابتوب توشيبا">    
-    <ul>
-      <li>المعالج: Intel Core i3 الجيل الأول</li>
-      <li>الرام: RAM 4 GB</li>
-      <li>التخزين: HDD 256 GB</li>
-      <li>بطارية ممتازة</li>
-      <li>وزن خفيف</li>
-    </ul>
-    <p class="price">100 JD</p>
-    <button class="view-more-btn">عرض المزيد</button>
-  </div>
-    <!-- كود البطاقة الخاص بك -->
-  <div class="product-card" data-category="study">
-    <h2>Lenovo</h2>
-    <img src="images/laptop3.jpeg" alt="صورة لابتوب لينوفو">    
-    <ul>
-      <li>المعالج: Intel سيليرون</li>
-      <li>الرام: RAM 8 GB</li>
-      <li>التخزين: SSD 256 GB</li>
-      <li>بطارية ممتازة</li>
-      <li>وزن خفيف</li>
-    </ul>
-    <p class="price">150 JD</p>
-    <a href="https://wa.me/962796611074" class="order-btn" target="_blank">أطلبه الآن عبر الواتساب</a>
-  </div>
+  <!-- صندوق المنتجات -->
+  <div class="products-container" id="products-container">
+    
+    <!-- بطاقة 1: Lenovo ThinkPad T460 -->
+    <div class="product-card" 
+         data-category="study"
+         data-title="Lenovo ThinkPad T460"
+         data-price="160 دينار"
+         data-desc="✅ الجهاز: Lenovo ThinkPad
+✅ المعالج: Intel Core i5 الجيل الخامس
+✅ التخزين: 256GB SSD سريع جداً
+✅ الرام: 8GB قابل للزيادة
+✅ البطارية: ممتازة جداً وأداء مستقر
+✅ تبريد قوي وتشغيل ثابت
+✅ تصميم أنيق وكلاس
+✅ كفر الجهاز قوي ومتين
+✅ المعاينة والفحص قبل الاستلام 🫡 
+🎁 مع الجهاز: بكج هدايا (قطعتين) 🎁
+🛡️ الأجهزة مكفولة 6 اشهر من أي عيوب مصنعية"
+         data-images="images/lenovo-t460.png,images/laptop2.jpeg,images/laptop3.jpeg">
+      <span class="badge used">مستعمل بحالة الجديد</span>
+      <h2>Lenovo ThinkPad T460</h2>
+      <img src="images/lenovo-t460.png" alt="صورة لابتوب لينوفو T460">    
+      <ul>
+        <li>🧠 المعالج: Intel Core i5 الجيل الخامس</li>
+        <li>⚡ الرام: RAM 8 GB</li>
+        <li>💾 التخزين: SSD 256 GB</li>
+        <li>🔋 بطارية ممتازة</li>
+        <li>🪶 وزن خفيف</li>
+      </ul>
+      <p class="price">160 JD</p>
+      <button class="view-more-btn">عرض المزيد</button>
+    </div>
+
+    <!-- بطاقة 2: Toshiba -->
+    <div class="product-card" 
+         data-category="study"
+         data-title="Toshiba"
+         data-price="100 دينار"
+         data-desc="✅ الجهاز: Toshiba
+✅ المعالج: Intel Core i3
+✅ التخزين: 160GB HDD سريع جداً
+✅ الرام: 4GB قابل للزيادة
+✅ البطارية: ممتازة جداً وأداء مستقر
+✅ تبريد قوي وتشغيل ثابت
+✅ تصميم أنيق وكلاس
+✅ كفر الجهاز قوي ومتين
+✅ المعاينة و الفحص قبل الاستلام 🫡 
+🎁 مع الجهاز: بكج هدايا (قطعتين) 🎁
+🛡️ الأجهزة مكفولة من أي عيوب مصنعية"
+         data-images="images/lenovo-t460.png,images/laptop2.jpeg,images/laptop3.jpeg">
+      <span class="badge new">جديد بالكرتونة</span>  
+      <h2>Toshiba</h2>
+      <img src="images/laptop2.jpeg" alt="صورة لابتوب توشيبا">    
+      <ul>
+        <li>المعالج: Intel Core i3 الجيل الأول</li>
+        <li>الرام: RAM 4 GB</li>
+        <li>التخزين: HDD 256 GB</li>
+        <li>بطارية ممتازة</li>
+        <li>وزن خفيف</li>
+      </ul>
+      <p class="price">100 JD</p>
+      <button class="view-more-btn">عرض المزيد</button>
+    </div>
+
+    <!-- بطاقة 3: Lenovo -->
     <div class="product-card" data-category="study">
-    <h2>HP</h2>
-    <img src="images/laptop4.jpeg" alt="صورة لابتوب لينوفو">    
-    <ul>
-      <li>المعالج: Intel Core i5 الجيل السادس</li>
-      <li>الرام: RAM 8 GB</li>
-      <li>التخزين: SSD 128 GB قابل للزيادة</li>
-      <li>بطارية ممتازة</li>
-      <li>وزن خفيف</li>
-    </ul>
-    <p class="price">190 JD</p>
-    <a href="https://wa.me/962796611074" class="order-btn" target="_blank">أطلبه الآن عبر الواتساب</a>
+      <h2>Lenovo</h2>
+      <img src="images/laptop3.jpeg" alt="صورة لابتوب لينوفو">    
+      <ul>
+        <li>المعالج: Intel سيليرون</li>
+        <li>الرام: RAM 8 GB</li>
+        <li>التخزين: SSD 256 GB</li>
+        <li>بطارية ممتازة</li>
+        <li>وزن خفيف</li>
+      </ul>
+      <p class="price">150 JD</p>
+      <a href="https://wa.me/962796611074" class="order-btn" target="_blank">أطلبه الآن عبر الواتساب</a>
+    </div>
+
+    <!-- بطاقة 4: HP -->
+    <div class="product-card" data-category="study">
+      <h2>HP</h2>
+      <img src="images/laptop4.jpeg" alt="صورة لابتوب HP">    
+      <ul>
+        <li>المعالج: Intel Core i5 الجيل السادس</li>
+        <li>الرام: RAM 8 GB</li>
+        <li>التخزين: SSD 128 GB قابل للزيادة</li>
+        <li>بطارية ممتازة</li>
+        <li>وزن خفيف</li>
+      </ul>
+      <p class="price">190 JD</p>
+      <a href="https://wa.me/962796611074" class="order-btn" target="_blank">أطلبه الآن عبر الواتساب</a>
+    </div>
+
+    <!-- رسالة الأقسام الفارغة -->
+    <p id="no-products-msg" style="display: none; font-size: 18px; color: #1e3c72; text-align: center; width: 100%; margin: 40px 0; font-weight: bold;">
+      ⏳ سيتم توفير أجهزة مميزة في هذا القسم قريباً!
+    </p>
   </div>
 
-    <p id="no-products-msg" style="display: none; font-size: 18px; color: #1e3c72; text-align: center; width: 100%; margin: 40px 0; font-weight: bold;">
-    ⏳ سيتم توفير أجهزة مميزة في هذا القسم قريباً!
-</p>
-
-</div>
-    <footer class="store-footer">
+  <footer class="store-footer">
     <p>© 2026 متجر E.M.R لأجهزة اللابتوب - جميع الحقوق محفوظة</p>
     <p class="footer-note">📍 الأردن | خدمة التوصيل متوفرة لجميع المحافظات 🚚</p>
-</footer>
+  </footer>
 
-<!-- النافذة المنبثقة (Modal) -->
-<div id="product-modal" class="modal">
-  <div class="modal-content">
-        <!-- زر الإغلاق -->
-    <span class="close-btn" id="close-modal">&times;</span>
-        
-    <!-- معرض الصور مع أزرار التنقل -->
-  <div style="position: relative; text-align: center; margin-bottom: 15px;">
-    <button id="prev-img-btn" type="button" style="position: absolute; right: 10px; top: 45%; background: rgba(30,60,114,0.7); color: white; border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-size: 18px;">❯</button>
-            
-    <img id="modal-img" src="" alt="صورة اللابتوب" style="width: 100%; height: 320px; object-fit: cover; border-radius: 8px;">
-            
-    <button id="next-img-btn" type="button" style="position: absolute; left: 10px; top: 45%; background: rgba(30,60,114,0.7); color: white; border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-size: 18px;">❮</button>
-  </div>
-        
-        <!-- تفاصيل الجهاز -->
-    <h2 id="modal-title" style="color: #1e3c72; margin-bottom: 10px;">اسم الجهاز</h2>
-    <ul id="modal-specs" style="list-style-type: none; padding: 0; line-height: 1.8; margin-bottom: 20px;">
-            <!-- سيتم إضافة المواصفات هنا برمجياً -->
-    </ul>
-        
-        <!-- زر الواتساب -->
-    <a id="modal-whatsapp" href="#" target="_blank" style="display: block; background-color: #25D366; color: white; text-align: center; padding: 12px; border-radius: 25px; text-decoration: none; font-weight: bold;">
-            💬 اطلب عبر واتساب
-    </a>
+  <!-- 1. النافذة المنبثقة لتفاصيل المنتج (Modal) -->
+  <div id="product-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" id="close-modal">&times;</span>
+          
+      <!-- معرض الصور وأسهم التنقل -->
+      <div style="position: relative; text-align: center; margin-bottom: 15px;">
+        <button id="prev-img-btn" type="button" style="position: absolute; right: 10px; top: 45%; background: rgba(30,60,114,0.7); color: white; border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-size: 18px;">❯</button>
+              
+        <!-- صورة المعاينة (قابلة للنقر لتكبيرها) -->
+        <img id="modal-img" src="" alt="صورة اللابتوب" title="اضغط لتكبير الصورة بالكامل 🔍" style="width: 100%; height: 320px; object-fit: cover; border-radius: 8px;">
+              
+        <button id="next-img-btn" type="button" style="position: absolute; left: 10px; top: 45%; background: rgba(30,60,114,0.7); color: white; border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-size: 18px;">❮</button>
+      </div>
+          
+      <h2 id="modal-title" style="color: #1e3c72; margin-bottom: 10px;">اسم الجهاز</h2>
+      <ul id="modal-specs"></ul>
+          
+      <a id="modal-whatsapp" href="#" target="_blank" style="display: block; background-color: #25D366; color: white; text-align: center; padding: 12px; border-radius: 25px; text-decoration: none; font-weight: bold;">
+        💬 اطلب عبر واتساب
+      </a>
+    </div>
   </div>
 
-</div>
+  <!-- 2. نافذة تكبير الصورة بالحجم الكامل (Lightbox) -->
+  <div id="lightbox-modal" class="lightbox">
+    <!-- زر إغلاق التكبير (X) -->
+    <span id="close-lightbox" class="lightbox-close">&times;</span>
 
-<script>
-    // تحديد جميع أزرار الفلترة وجميع بطاقات المنتجات
-     const filterButtons = document.querySelectorAll('.filter-btn');
-     const productCards = document.querySelectorAll('.product-card');
-     const noProductsMsg = document.getElementById('no-products-msg');
+    <!-- زر السابق للتكبير -->
+    <button id="lightbox-prev-btn" class="lightbox-nav-btn" type="button">❯</button>
 
-      filterButtons.forEach(button => {
-     button.addEventListener('click', () => {
-            // 1. إزالة كلاس active من جميع الأزرار وإضافته للزر المضغوط فقط
-      filterButtons.forEach(btn => btn.classList.remove('active'));
-     button.classList.add('active');
+    <!-- عنصر الصورة المكبرة بشاشة كاملة -->
+    <img id="lightbox-img" class="lightbox-img" src="" alt="صورة مكبرة">
 
-            // 2. معرفة القسم المختار
-     const selectedFilter = button.getAttribute('data-filter');
-     let visibleCardsCount = 0; // عداد لمعرفة عدد الأجهزة المعروضة
+    <!-- زر التالي للتكبير -->
+    <button id="lightbox-next-btn" class="lightbox-nav-btn" type="button">❮</button>
+  </div>
 
-            // 3. إظهار أو إخفاء البطاقات حسب القسم
-      productCards.forEach(card => {
-     const cardCategory = card.getAttribute('data-category');
+  <script>
+    // =========================================================================
+    // 0. قراءة المنتجات المحفوظة في localStorage وعرضها داخل الصفحة
+    // =========================================================================
+    const productsContainer = document.getElementById('products-container');
+    const savedProducts = JSON.parse(localStorage.getItem('products')) || [];
 
-  if (selectedFilter === 'all' || cardCategory === selectedFilter) {
-     card.style.display = 'block';
-     visibleCardsCount++; // زيادة العداد عند إظهار بطاقة
-            } else {
-     card.style.display = 'none';
-            }
-        });
+    savedProducts.forEach(product => {
+      const badgeText = product.status === 'new' ? 'جديد بالكرتونة' : 'مستعمل بحالة الجديد';
+      const badgeClass = product.status === 'new' ? 'new' : 'used';
 
-            // إذا كان عدد البطاقات الظاهرة صفر، نظهر الرسالة
-  if (visibleCardsCount === 0) {
-     noProductsMsg.style.display = 'block';
-            } else {
-     noProductsMsg.style.display = 'none';
-            }
-        });
+      const rawSpecs = product.quickSpecs || product.specs || '';
+      const specsListHTML = rawSpecs
+        .split('\n')
+        .filter(line => line.trim() !== '')
+        .map(line => `<li>${line.trim()}</li>`)
+        .join('');
+
+      const firstImage = product.image ? product.image.split(',')[0].trim() : '';
+
+      const cardHTML = `
+        <div class="product-card" 
+             data-category="${product.category || 'all'}"
+             data-title="${product.name}"
+             data-price="${product.price} دينار"
+             data-desc="${product.desc || product.specs || ''}"
+             data-images="${product.image}">
+          <span class="badge ${badgeClass}">${badgeText}</span>
+          <h2>${product.name}</h2>
+          <img src="${firstImage}" alt="${product.name}">    
+          <ul>
+            ${specsListHTML}
+          </ul>
+          <p class="price">${product.price} JD</p>
+          <button class="view-more-btn">عرض المزيد</button>
+        </div>
+      `;
+
+      productsContainer.insertAdjacentHTML('afterbegin', cardHTML);
     });
 
-// 1. جلب عناصر النافذة المنبثقة ومعرض الصور
-     const modal = document.getElementById('product-modal');
-     const closeModal = document.getElementById('close-modal');
-     const modalImg = document.getElementById('modal-img');
-     const modalTitle = document.getElementById('modal-title');
-     const modalSpecs = document.getElementById('modal-specs');
-     const modalWhatsapp = document.getElementById('modal-whatsapp');
-     const prevImgBtn = document.getElementById('prev-img-btn');
-     const nextImgBtn = document.getElementById('next-img-btn');
+    // =========================================================================
+    // 1. فلترة وتصفية الأجهزة حسب الأقسام
+    // =========================================================================
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const productCards = document.querySelectorAll('.product-card');
+    const noProductsMsg = document.getElementById('no-products-msg');
 
-// متغيرات لتتبع صور الجهاز الحالي
-     let currentImages = [];
-     let currentImageIndex = 0;
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
 
-// 2. تفعيل أزرار "عرض المزيد"
-     const viewMoreButtons = document.querySelectorAll('.view-more-btn');
+        const selectedFilter = button.getAttribute('data-filter');
+        let visibleCardsCount = 0;
 
-           viewMoreButtons.forEach(button => {
-     button.addEventListener('click', () => {
-     const card = button.closest('.product-card');
+        productCards.forEach(card => {
+          const cardCategory = card.getAttribute('data-category');
 
-        // جلب البيانات من البطاقة
-     const title = card.getAttribute('data-title');
-     const price = card.getAttribute('data-price');
-     const desc = card.getAttribute('data-desc');
+          if (selectedFilter === 'all' || cardCategory === selectedFilter) {
+            card.style.display = 'block';
+            visibleCardsCount++;
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        if (visibleCardsCount === 0) {
+          noProductsMsg.style.display = 'block';
+        } else {
+          noProductsMsg.style.display = 'none';
+        }
+      });
+    });
+
+    // =========================================================================
+    // 2. إدارة النافذة المنبثقة ومعرض الصور العادي
+    // =========================================================================
+    const modal = document.getElementById('product-modal');
+    const closeModal = document.getElementById('close-modal');
+    const modalImg = document.getElementById('modal-img');
+    const modalTitle = document.getElementById('modal-title');
+    const modalSpecs = document.getElementById('modal-specs');
+    const modalWhatsapp = document.getElementById('modal-whatsapp');
+    const prevImgBtn = document.getElementById('prev-img-btn');
+    const nextImgBtn = document.getElementById('next-img-btn');
+
+    // عناصر نافذة التكبير بالحجم الكامل (Lightbox)
+    const lightboxModal = document.getElementById('lightbox-modal');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const closeLightbox = document.getElementById('close-lightbox');
+    const lightboxPrevBtn = document.getElementById('lightbox-prev-btn');
+    const lightboxNextBtn = document.getElementById('lightbox-next-btn');
+
+    let currentImages = [];
+    let currentImageIndex = 0;
+
+    // تفعيل أزرار "عرض المزيد"
+    const viewMoreButtons = document.querySelectorAll('.view-more-btn');
+
+    viewMoreButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const card = button.closest('.product-card');
+
+        const title = card.getAttribute('data-title');
+        const price = card.getAttribute('data-price');
+        const desc = card.getAttribute('data-desc');
+        const imagesAttr = card.getAttribute('data-images') || card.getAttribute('data-img');
         
-        // جلب الصور: إذا وجدت data-images نأخذها، وإلا نأخذ data-img القديمة
-     const imagesAttr = card.getAttribute('data-images') || card.getAttribute('data-img');
-        
-        // تحويل النص المفصول بفواصل إلى قائمة صور حقيقية
-           currentImages = imagesAttr.split(',');
-           currentImageIndex = 0; // البدء دائماً من الصورة الأولى
+        // تفكيك الصور لمصفوفة نظيفة
+        currentImages = imagesAttr ? imagesAttr.split(',').map(s => s.trim()).filter(s => s !== '') : [];
+        currentImageIndex = 0;
 
-        // تعبئة البيانات في النافذة
-           modalTitle.textContent = title;
-           modalImg.src = currentImages[currentImageIndex]; // عرض أول صورة
+        // إظهار أو إخفاء أسهم التقليب بناءً على عدد الصور
+        const hasMultipleImages = currentImages.length > 1;
+        prevImgBtn.style.display = hasMultipleImages ? 'block' : 'none';
+        nextImgBtn.style.display = hasMultipleImages ? 'block' : 'none';
+        lightboxPrevBtn.style.display = hasMultipleImages ? 'flex' : 'none';
+        lightboxNextBtn.style.display = hasMultipleImages ? 'flex' : 'none';
+
+        // ملء بيانات النافذة
+        modalTitle.textContent = title;
+        modalImg.src = currentImages[currentImageIndex] || '';
         
-           modalSpecs.innerHTML = `
-           <li>💰 <strong>السعر:</strong> ${price}</li>
-           <li>📝 <strong>المواصفات والوصف:</strong> ${desc}</li>
+        modalSpecs.innerHTML = `
+          <li>💰 <strong>السعر:</strong> ${price}</li>
+          <li>📝 <strong>المواصفات والوصف:</strong><br>${desc}</li>
         `;
 
-        // تجهيز رابط الواتساب برقمك ورسالة الطلب
-     const phone = "962796611074";
-     const message = `مرحباً، أود الاستفسار عن جهاز ${title} بسعر ${price}`;
-           modalWhatsapp.href = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+        const phone = "962796611074";
+        const message = `مرحباً، أود الاستفسار عن جهاز ${title} بسعر ${price}`;
+        modalWhatsapp.href = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 
-        // إظهار النافذة
-           modal.style.display = 'block';
-        });
+        modal.style.display = 'block';
+      });
     });
 
-// 3. أزرار تقليب الصور (السابق والتالي)
-           nextImgBtn.addEventListener('click', () => {
-  if (currentImages.length > 1) {
+    // =========================================================================
+    // 3. تقليب الصور في النافذة المنبثقة العادية
+    // =========================================================================
+    nextImgBtn.addEventListener('click', () => {
+      if (currentImages.length > 1) {
         currentImageIndex = (currentImageIndex + 1) % currentImages.length;
-           modalImg.src = currentImages[currentImageIndex];
-        }
+        modalImg.src = currentImages[currentImageIndex];
+      }
     });
 
-           prevImgBtn.addEventListener('click', () => {
-  if (currentImages.length > 1) {
-        // الانتقال للصورة السابقة والرجوع لآخر صورة إذا كنا في البداية
-           currentImageIndex = (currentImageIndex - 1 + currentImages.length) % currentImages.length;
-           modalImg.src = currentImages[currentImageIndex];
-        }
+    prevImgBtn.addEventListener('click', () => {
+      if (currentImages.length > 1) {
+        currentImageIndex = (currentImageIndex - 1 + currentImages.length) % currentImages.length;
+        modalImg.src = currentImages[currentImageIndex];
+      }
     });
 
-// 4. إغلاق النافذة
-           closeModal.addEventListener('click', () => {
-           modal.style.display = 'none';
+    // =========================================================================
+    // 4. التحكم بنافذة التكبير بالحجم الكامل (Lightbox)
+    // =========================================================================
+    
+    // عند الضغط على صورة النافذة المنبثقة، نفتح الصورة بحجم كامل
+    modalImg.addEventListener('click', () => {
+      if (currentImages.length > 0) {
+        lightboxImg.src = currentImages[currentImageIndex];
+        lightboxModal.style.display = 'flex'; // فتح النافذة وتوسيط محتواها
+      }
     });
 
-           window.addEventListener('click', (event) => {
-  if (event.target === modal) {
-           modal.style.display = 'none';
-        }
+    // تقليب الصورة التالية بالحجم المكبر
+    lightboxNextBtn.addEventListener('click', (e) => {
+      e.stopPropagation(); // منع إغلاق النافذة عند الضغط على السهم
+      if (currentImages.length > 1) {
+        currentImageIndex = (currentImageIndex + 1) % currentImages.length;
+        lightboxImg.src = currentImages[currentImageIndex];
+        modalImg.src = currentImages[currentImageIndex]; // تحديث الصورة في النافذة السابقة أيضاً
+      }
     });
 
-</script>
+    // تقليب الصورة السابقة بالحجم المكبر
+    lightboxPrevBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (currentImages.length > 1) {
+        currentImageIndex = (currentImageIndex - 1 + currentImages.length) % currentImages.length;
+        lightboxImg.src = currentImages[currentImageIndex];
+        modalImg.src = currentImages[currentImageIndex];
+      }
+    });
+
+    // إغلاق نافذة التكبير بالضغط على زر (X)
+    closeLightbox.addEventListener('click', () => {
+      lightboxModal.style.display = 'none';
+    });
+
+    // إغلاق نافذة التكبير عند النقر في أي مكان مظلم خارج الصورة
+    lightboxModal.addEventListener('click', (event) => {
+      if (event.target === lightboxModal) {
+        lightboxModal.style.display = 'none';
+      }
+    });
+
+    // =========================================================================
+    // 5. إغلاق النافذة المنبثقة العادية
+    // =========================================================================
+    closeModal.addEventListener('click', () => {
+      modal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (event) => {
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
+  </script>
 
 </body>
 </html>
