@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم - متجر E.M.R</title>
+
+  <!-- استدعاء خط Cairo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Cairo', sans-serif !important;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      background-color: #f1f5f9;
+      color: #334155;
+    }
+
+    /* =========================================================
+       1. صندوق تسجيل الدخول (Login Box)
+       ========================================================= */
+    #login-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 80vh;
+    }
+
+    .login-card {
+      background-color: #ffffff;
+      padding: 35px 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      border: 1px solid #e2e8f0;
+    }
+
+    .login-card h2 {
+      color: #1e3c72;
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .login-card p {
+      font-size: 14px;
+      color: #64748b;
+      margin-bottom: 25px;
+    }
+
+    .login-card input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 15px;
+      outline: none;
+      text-align: center;
+      margin-bottom: 15px;
+      transition: border-color 0.2s;
+    }
+
+    .login-card input:focus {
+      border-color: #1e3c72;
+      box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.15);
+    }
+
+    .login-card button {
+      width: 100%;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: #ffffff;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(30, 60, 114, 0.25);
+    }
+
+    #login-error {
+      color: #ef4444;
+      font-size: 13px;
+      margin-top: 12px;
+      display: none;
+      font-weight: 600;
+    }
+
+    /* =========================================================
+       2. شريط الرأس وتنسيقات لوحة التحكم (مخفية افتراضياً)
+       ========================================================= */
+    #dashboard-wrapper {
+      display: none; /* إخفاء المحتوى الكامل لحين التحقق من كلمة السر */
+    }
+
+    .top-header {
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: #ffffff;
+      padding: 16px 25px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 15px rgba(30, 60, 114, 0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .top-header h1 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .header-links {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn-header {
+      background-color: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .btn-header:hover {
+      background-color: #ffffff;
+      color: #1e3c72;
+    }
+
+    .btn-logout {
+      background-color: #ef4444 !important;
+    }
+
+    .btn-logout:hover {
+      background-color: #dc2626 !important;
+      color: #ffffff !important;
+    }
+
+    .dashboard-container {
+      display: grid;
+      grid-template-columns: 1fr 1.35fr;
+      gap: 25px;
+      align-items: start;
+    }
+
+    .card {
+      background-color: #ffffff;
+      border-radius: 14px;
+      padding: 24px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e2e8f0;
+    }
+
+    .card-title {
+      color: #1e3c72;
+      font-size: 19px;
+      margin-top: 0;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #f1f5f9;
+      padding-bottom: 12px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 7px;
+      font-weight: 600;
+      font-size: 14px;
+      color: #475569;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s ease;
+      background-color: #f8fafc;
+    }
+
+    .form-control:focus {
+      border-color: #1e3c72;
+      background-color: #ffffff;
+      box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.15);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .btn-primary {
+      flex: 1;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: #ffffff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(30, 60, 114, 0.25);
+    }
+
+    .btn-secondary {
+      background-color: #94a3b8;
+      color: #ffffff;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .modern-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .modern-table thead th {
+      background-color: #f8fafc;
+      color: #1e3c72;
+      font-weight: 700;
+      padding: 12px 10px;
+      border-bottom: 2px solid #e2e8f0;
+      white-space: nowrap;
+    }
+
+    .modern-table tbody td {
+      padding: 12px 10px;
+      border-bottom: 1px solid #f1f5f9;
+      vertical-align: middle;
+    }
+
+    .action-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      width: 90px;
+      margin: 0 auto;
+    }
+
+    .btn-edit {
+      background-color: #0288d1;
+      color: #ffffff;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-delete {
+      background-color: #ef4444;
+      color: #ffffff;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    @media (max-width: 992px) {
+      .dashboard-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. شاشة تسجيل الدخول -->
+  <div id="login-container">
+    <div class="login-card">
+      <h2>🔒 لوحة التحكم</h2>
+      <p>أدخل كلمة مرور المسؤول للمتابعة</p>
+      <form id="login-form">
+        <input type="password" id="password-input" placeholder="كلمة المرور" required autofocus>
+        <button type="submit">تسجيل الدخول</button>
+      </form>
+      <div id="login-error">كلمة المرور غير صحيحة، حاول مجدداً!</div>
+    </div>
+  </div>
+
+  <!-- 2. محتوى لوحة التحكم الكامل (يفتح بعد التحقق فقط) -->
+  <div id="dashboard-wrapper">
+    <header class="top-header">
+      <h1>لوحة إدارة المنتجات - E.M.R</h1>
+      <div class="header-links">
+        <a href="index.html" class="btn-header" target="_blank">🌐 تصفح المتجر</a>
+        <button id="logout-btn" class="btn-header btn-logout">خروج 🚪</button>
+      </div>
+    </header>
+
+    <main class="dashboard-container">
+      <!-- نموذج إضافة وتعديل الجهاز -->
+      <section class="card">
+        <h2 id="form-heading" class="card-title">📝 إضافة جهاز جديد</h2>
+
+        <form id="product-form">
+          <div class="form-group">
+            <label for="device-name">اسم اللابتوب والموديل:</label>
+            <input type="text" id="device-name" class="form-control" placeholder="مثال: Lenovo ThinkPad T460" required>
+          </div>
+
+          <div class="form-group">
+            <label for="device-price">السعر (بالدينار الأردني JD):</label>
+            <input type="number" id="device-price" class="form-control" placeholder="مثال: 160" required>
+          </div>
+
+          <div class="form-group">
+            <label for="device-images">مسارات الصور (ضع كل رابط في سطر):</label>
+            <textarea id="device-images" class="form-control" rows="3" placeholder="images/laptop1.png&#10;images/laptop2.jpg&#10;images/laptop3.jpg" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="device-status">حالة الجهاز:</label>
+            <select id="device-status" class="form-control" required>
+              <option value="" disabled selected>اختر الحالة...</option>
+              <option value="new">جديد بالكرتونة</option>
+              <option value="used">مستعمل بحالة الجديد</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="device-category">قسم الجهاز في المتجر:</label>
+            <select id="device-category" class="form-control" required>
+              <option value="" disabled selected>اختر القسم...</option>
+              <option value="study">أجهزة الدراسة</option>
+              <option value="gaming">أجهزة الألعاب</option>
+              <option value="design">أجهزة التصميم و البرمجة</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="device-quick-specs">المواصفات السريعة للبطاقة (كل نقطة في سطر):</label>
+            <textarea id="device-quick-specs" class="form-control" rows="4" placeholder="🧠 المعالج: Intel Core i5&#10;⚡ الرام: RAM 8 GB&#10;💾 التخزين: SSD 256 GB&#10;🔋 بطارية ممتازة&#10;🪶 وزن خفيف" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="device-desc">الوصف الشامل (تفاصيل الكفالة، الهدايا، الفحص):</label>
+            <textarea id="device-desc" class="form-control" rows="5" placeholder="اكتب هنا جميع المواصفات بالتفصيل لتظهر للمشتري عند فتح النافذة المنبثقة..." required></textarea>
+          </div>
+
+          <div class="btn-group">
+            <button type="submit" id="submit-btn" class="btn-primary">إضافة الجهاز للمتجر</button>
+            <button type="button" id="cancel-edit-btn" class="btn-secondary" style="display: none;">إلغاء التعديل</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- جدول الأجهزة المضافة -->
+      <section class="card">
+        <h2 class="card-title">💻 الأجهزة المسجلة في المتجر</h2>
+        <div class="table-responsive">
+          <table class="modern-table">
+            <thead>
+              <tr>
+                <th>المعاينة</th>
+                <th>اسم الجهاز</th>
+                <th>السعر</th>
+                <th>القسم</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="products-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // كلمة المرور المعتمدة
+    const CORRECT_PASSWORD = 'emr744511';
+
+    // عناصر التحكم في تسجيل الدخول
+    const loginContainer = document.getElementById('login-container');
+    const dashboardWrapper = document.getElementById('dashboard-wrapper');
+    const loginForm = document.getElementById('login-form');
+    const passwordInput = document.getElementById('password-input');
+    const loginError = document.getElementById('login-error');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    // ==========================================================
+    // 0. إدارة جلسة تسجيل الدخول (Session Storage)
+    // ==========================================================
+    function checkLoginStatus() {
+      if (sessionStorage.getItem('isAdminLoggedIn') === 'true') {
+        loginContainer.style.display = 'none';
+        dashboardWrapper.style.display = 'block';
+        displayProducts();
+      } else {
+        loginContainer.style.display = 'flex';
+        dashboardWrapper.style.display = 'none';
+      }
+    }
+
+    loginForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      if (passwordInput.value === CORRECT_PASSWORD) {
+        sessionStorage.setItem('isAdminLoggedIn', 'true');
+        loginError.style.display = 'none';
+        passwordInput.value = '';
+        checkLoginStatus();
+      } else {
+        loginError.style.display = 'block';
+        passwordInput.value = '';
+        passwordInput.focus();
+      }
+    });
+
+    logoutBtn.addEventListener('click', function() {
+      sessionStorage.removeItem('isAdminLoggedIn');
+      checkLoginStatus();
+    });
+
+    // ==========================================================
+    // عناصر ونماذج إدارة المنتجات
+    // ==========================================================
+    const productForm = document.getElementById('product-form');
+    const formHeading = document.getElementById('form-heading');
+    const submitBtn = document.getElementById('submit-btn');
+    const cancelEditBtn = document.getElementById('cancel-edit-btn');
+    const tableBody = document.getElementById('products-table-body');
+    let editIndex = null;
+
+    const categoryLabels = {
+      'study': 'الدراسة',
+      'gaming': 'الألعاب',
+      'design': 'التصميم والبرمجة'
+    };
+
+    function displayProducts() {
+      const products = JSON.parse(localStorage.getItem('products')) || [];
+      tableBody.innerHTML = '';
+
+      if (products.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="5" style="padding: 25px; color: #94a3b8;">لا توجد أجهزة مضافة حالياً.</td></tr>`;
+        return;
+      }
+
+      products.forEach((product, index) => {
+        const firstImg = product.image ? product.image.split(',')[0].trim() : '';
+        const arabicCategory = categoryLabels[product.category] || product.category;
+
+        const row = `
+          <tr>
+            <td>
+              <img src="${firstImg}" width="65" height="45" style="object-fit: cover; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            </td>
+            <td style="font-weight: 700; color: #1e293b;">${product.name}</td>
+            <td style="color: #e63946; font-weight: 700;">${product.price} JD</td>
+            <td><span style="background: #e2e8f0; padding: 4px 10px; border-radius: 12px; font-size: 12px;">${arabicCategory}</span></td>
+            <td>
+              <div class="action-stack">
+                <button onclick="startEdit(${index})" class="btn-edit">تعديل ✏️</button>
+                <button onclick="deleteProduct(${index})" class="btn-delete">حذف 🗑️</button>
+              </div>
+            </td>
+          </tr>
+        `;
+        tableBody.innerHTML += row;
+      });
+    }
+
+    function startEdit(index) {
+      const products = JSON.parse(localStorage.getItem('products')) || [];
+      const product = products[index];
+      if (!product) return;
+
+      editIndex = index;
+      document.getElementById('device-name').value = product.name;
+      document.getElementById('device-price').value = product.price;
+      document.getElementById('device-status').value = product.status;
+      document.getElementById('device-category').value = product.category;
+      document.getElementById('device-quick-specs').value = product.quickSpecs || '';
+      document.getElementById('device-desc').value = product.desc || '';
+
+      if (product.image) {
+        document.getElementById('device-images').value = product.image.split(',').join('\n');
+      }
+
+      formHeading.textContent = `✏️ تعديل بيانات: ${product.name}`;
+      submitBtn.textContent = 'حفظ التعديلات 💾';
+      submitBtn.style.background = 'linear-gradient(135deg, #0288d1, #026aa7)';
+      cancelEditBtn.style.display = 'inline-block';
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetFormMode() {
+      editIndex = null;
+      productForm.reset();
+      formHeading.textContent = '📝 إضافة جهاز جديد';
+      submitBtn.textContent = 'إضافة الجهاز للمتجر';
+      submitBtn.style.background = '';
+      cancelEditBtn.style.display = 'none';
+    }
+
+    cancelEditBtn.addEventListener('click', resetFormMode);
+
+    function deleteProduct(index) {
+      if (confirm('هل أنت متأكد من رغبتك في حذف هذا الجهاز من المتجر؟')) {
+        let products = JSON.parse(localStorage.getItem('products')) || [];
+        products.splice(index, 1);
+        localStorage.setItem('products', JSON.stringify(products));
+
+        if (editIndex === index) {
+          resetFormMode();
+        }
+        displayProducts();
+      }
+    }
+
+    productForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const rawImages = document.getElementById('device-images').value;
+      const cleanedImages = rawImages
+        .split('\n')
+        .map(link => link.trim())
+        .filter(link => link !== '')
+        .join(',');
+
+      const productData = {
+        name: document.getElementById('device-name').value,
+        price: document.getElementById('device-price').value,
+        image: cleanedImages,
+        status: document.getElementById('device-status').value,
+        category: document.getElementById('device-category').value,
+        quickSpecs: document.getElementById('device-quick-specs').value,
+        desc: document.getElementById('device-desc').value
+      };
+
+      let products = JSON.parse(localStorage.getItem('products')) || [];
+
+      if (editIndex !== null) {
+        products[editIndex] = productData;
+        alert('تم حفظ التعديلات بنجاح! 💾');
+      } else {
+        products.push(productData);
+        alert('تمت إضافة الجهاز الجديد بنجاح! ✅');
+      }
+
+      localStorage.setItem('products', JSON.stringify(products));
+      resetFormMode();
+      displayProducts();
+    });
+
+    // فحص حالة الدخول فور فتح الصفحة
+    checkLoginStatus();
+  </script>
+
+</body>
+</html>
